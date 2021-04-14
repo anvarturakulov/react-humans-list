@@ -9,9 +9,10 @@ export default class App extends Component {
 
     render() {
 
-        fetch('cities.json')
-            .then(data =>console.log(data))
-            .then(res => console.log(res))
+        // fetch('my-json-server.typicode.com/anvarturakulov/react-humans-list/blob/main/src/data/citizens.json')
+            fetch('citizens.json')
+                .then(data =>data.json())
+                .then(res => console.log(res))
             
 
         return(
