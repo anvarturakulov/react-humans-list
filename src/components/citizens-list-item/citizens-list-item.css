@@ -1,0 +1,13 @@
+.list-item{
+    border: 1px solid #f1c846;
+}
+
+.caption-box{
+    display: flex;
+    justify-content: space-between;
+}
+
+.information-block{
+    display: flex;
+    justify-content: space-between;
+}
