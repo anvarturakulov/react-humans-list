@@ -1,0 +1,18 @@
+.filtr-info-box{
+    display: flex;
+}
+
+.filtr-info-box button{
+    margin: 00px 10px;
+    cursor : pointer;
+}
+
+.filtr-info-box button:hover{
+    background-color: burlywood;
+    outline: none;
+}
+
+.comment{
+    width: 200px;
+    font-size: 12px;
+}

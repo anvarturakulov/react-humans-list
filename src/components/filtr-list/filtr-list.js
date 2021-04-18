@@ -17,8 +17,8 @@ export default class FiltrList extends Component {
         if (arr.length > 0) {
             const result = arr.map((item) => {
                 return (
-                    <li key = {item.idPerson} onClick={(e)=>this.props.onClickFilterItem(e,item,this.props.listType)}>
-                        <a className='filtr-link' href='#'>
+                    <li key = {item.idPerson} >
+                        <a className='filtr-link' href='#' onClick={(e)=>this.props.onClickFilterItem(e,item,this.props.listType)}>
                             <span>{item[`${this.props.listType}`]}</span>
                             <span>{this.countCitizens(item, this.props.listType)}</span>
                         </a>

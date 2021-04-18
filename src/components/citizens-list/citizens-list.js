@@ -20,14 +20,29 @@ export default class CitizensList extends Component {
         }
     }
     
+
     render() {
         const {itemlist} = this.props;
+        const {filterCity, filterDistrict, filterStreet} =this.props;
         const items = this.renderItems(itemlist);
+        const cityBox = (filterCity !== '') ? <button onClick = {()=> this.props.btnDelete('city')}>{filterCity}</button> : <></>;
+        const districtBox = (filterDistrict !== '') ? <button onClick = {()=> this.props.btnDelete('district')}>{filterDistrict}</button> : <></>;
+        const streetBox = (filterStreet !== '') ? <button onClick = {()=> this.props.btnDelete('street')}>{filterStreet}</button> : <></>;
+        const comment = (filterCity+filterDistrict+filterStreet) !='' ? <div className='comment'>Чтобы убрать или изменить филтр нажмите кнопки</div>: null;
 
         return(
-            <ul className='app-list'>
-                {items}
-            </ul>
+            <div>
+                <div className='filtr-info-box'>
+                    {cityBox} 
+                    {districtBox}
+                    {streetBox}
+                    {comment}
+                </div>
+                <ul className='app-list'>
+                    {items}
+                </ul>
+            </div>
+            
         )    
     }
     

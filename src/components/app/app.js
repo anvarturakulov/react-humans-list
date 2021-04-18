@@ -14,16 +14,22 @@ export default class App extends Component {
                 cities : [],
                 citizens : [],
                 visibleCitizens : [], 
-                currentCityList : [],
-                currentDistrictList : [],
-                currentStreetList : [],
-                filtrStart : false
+                // currentCityList : [],
+                // currentDistrictList : [],
+                // currentStreetList : [],
+                filtrStart : false,
+                filterCity: '',
+                filterDistrict : '',
+                filterStreet : ''
             }
         this.getData = new GetData();
         this.loadStartData = this.loadStartData.bind(this);
         this.selectionList = this.selectionList.bind(this);
         this.onClickFilterItem = this.onClickFilterItem.bind(this);
         this.allCitizens = this.allCitizens.bind(this);
+        this.filtrVisibleCitizens = this.filtrVisibleCitizens.bind(this);
+        this.btnDelete = this.btnDelete.bind(this);
+
     }
 
     async loadStartData() {
@@ -96,34 +102,51 @@ export default class App extends Component {
         return newArr;
     }
 
-    onClickFilterItem (e,currentItem, listType) {
+
+    filtrVisibleCitizens() {
+        const {filterCity, filterDistrict, filterStreet, citizens} = this.state;
+        const filterFlag = [0,0,0];
+
+        filterFlag[0] = filterCity =='' ? 0 : 1; 
+        filterFlag[1] = filterDistrict =='' ? 0 : 1; 
+        filterFlag[2] = filterStreet =='' ? 0 : 1; 
+
+        const visibleCitizens = citizens.filter(element => {
+            return (
+                    ((filterFlag[0] == 0)||(element['city'] == filterCity))
+                    &&
+                    ((filterFlag[1] == 0)||(element['district'] == filterDistrict))
+                    && 
+                    ((filterFlag[2] == 0)||(element['street'] == filterStreet))
+                )
+        })
+
+        this.setState({visibleCitizens})
+    }
+
+    async onClickFilterItem (e,currentItem, listType) {
         
         if (this.state.filtrStart == false) {
             this.setState({filtrStart : true})
         }
-        
+
         const {citizens} = this.state;
-        const visibleCitizens = citizens.filter(element => {
-            return element[`${listType}`] === currentItem[`${listType}`]
-        })
-
-        this.setState({visibleCitizens})
-
-        let currentCityList, currentDistrictList, currentStreetList;
         
-        if (listType = 'city') {
-            currentCityList = visibleCitizens;
-            currentDistrictList = this.selectionList(visibleCitizens, 'district');
-            currentStreetList = this.selectionList(currentDistrictList, 'street');
-            this.setState({currentDistrictList});
-            this.setState({currentStreetList});
+        if (listType == 'city') {
+          await this.setState({filterCity :currentItem[`city`]});
+        
         }
 
-        if (listType = 'district') {
-            currentDistrictList = visibleCitizens;
-            currentStreetList = this.selectionList(currentDistrictList, 'street');
-            this.setState({currentStreetList});
+        if (listType == 'district') {
+            await this.setState({filterDistrict :currentItem[`district`]});
         }
+
+        if (listType == 'street') {
+            await this.setState({filterStreet :currentItem[`street`]});
+        }
+
+        this.filtrVisibleCitizens();
+
     }
 
     allCitizens() {
@@ -133,6 +156,23 @@ export default class App extends Component {
         const currentStreetList = this.selectionList(citizens, 'street');
         this.setState({currentDistrictList});
         this.setState({currentStreetList});
+        this.setState({filterCity : ''});
+        this.setState({filterDistrict : ''});
+        this.setState({filterStreet : ''});
+    }
+
+    async btnDelete(type) {
+        switch (type) {
+            case 'city':
+                await this.setState({filterCity : ''});
+            case 'district':
+                await this.setState({filterDistrict : ''});
+            case 'street':
+                await this.setState({filterStreet : ''});
+          }
+        
+          this.filtrVisibleCitizens();
+        
     }
 
     render() {
@@ -141,19 +181,20 @@ export default class App extends Component {
         let currentCityList, currentDistrictList, currentStreetList; 
 
         currentCityList = this.selectionList(citizens, 'city');
-        
-        if (filtrStart) {
-            currentDistrictList = this.state.currentDistrictList;;
-            currentStreetList = this.state.currentStreetList;
-        } else {
-            currentDistrictList = this.selectionList(citizens, 'district');
-            currentStreetList = this.selectionList(citizens, 'street');
-        }
-        
+        currentDistrictList = this.selectionList(citizens, 'district');
+        currentStreetList = this.selectionList(citizens, 'street');
 
+        // if (filtrStart) {
+        //     currentDistrictList = this.state.currentDistrictList;;
+        //     currentStreetList = this.state.currentStreetList;
+        // } else {
+        //     currentDistrictList = this.selectionList(citizens, 'district');
+        //     currentStreetList = this.selectionList(citizens, 'street');
+        // }
+        
         return(
             <div className='app'>
-                <Header />
+                <Header col ={visibleCitizens.length}/>
                 <div className='app-bottom'>
                     <FiltrPanel
                         currentCityList = {currentCityList}
@@ -164,7 +205,11 @@ export default class App extends Component {
                         allCitizens = {this.allCitizens}
                     />
                     <CitizensList 
-                        itemlist = {visibleCitizens}    
+                        itemlist = {visibleCitizens} 
+                        filterCity = {this.state.filterCity}   
+                        filterDistrict = {this.state.filterDistrict}   
+                        filterStreet = {this.state.filterStreet}  
+                        btnDelete = {this.btnDelete} 
                     />
                 </div>
             </div>

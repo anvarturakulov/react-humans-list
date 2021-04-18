@@ -9,10 +9,10 @@ const CitizensListItem =({country, cityId, name, city, district, street}) => {
                 <button>Изменить данные</button>
             </div>
             <div className='information-block'>
-                <div className='citizen-country'>{`в ${country}`}</div>
-                <div className='citizen-city'>город {city} </div>
-                <div className='citizen-district'>{` в ${district}`}</div>
-                <div className='citizen-street'>{` на улице ${street}`}</div>
+                <div className='inf-block'>живет в <span>{country}</span></div>
+                <div className='inf-block'><span>{city}</span></div>
+                <div className='inf-block'>в <span>{district}</span></div>
+                <div className='inf-block'>на <span>{street}</span></div>
             </div>
         </div>
     )

@@ -2,10 +2,10 @@ import React from 'react';
 
 import './header.css';
 
-const Header = () => {
+const Header = ({col}) => {
     return (
         <div>
-            <h1>Всего 2344 граждан в Москве</h1>
+            <h1>Всего {col} граждан</h1>
         </div>
     )
 }
