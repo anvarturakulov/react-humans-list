@@ -8,76 +8,163 @@ import GetData from '../../services/getData';
 
 export default class App extends Component {
     
-    getData = new GetData();
-    state = {
-        cities : [],
-        citizens : []
-        // citizens : [{keyitems: 0, country: "ddddd", nameA: "Анна", cityId: 0, district: "ssss",},
-        //            {keyitems: 1, country: "ddddd", nameA: "Степан", cityId: 1, district: "ssss", },
-        //            {keyitems: 2, country: "ddddd", nameA: "Виктор", cityId: 1, district: "ssss",},
-        //            {keyitems: 3, country: "ddddd", nameA: "Алексей", cityId: 1, district: "ssss", },
-        //            {keyitems: 4, country: "ddddd", nameA: "Ярослав", cityId: 1, district: "ssss", },
-        //            {keyitems: 5, country: "ddddd", nameA: "Антонина", cityId: 1, district: "ssss", },
-        //            {keyitems: 6, country: "ddddd", nameA: "Григорий", cityId: 2, district: "ssss", },
-        //             {keyitems: 7, country: "ddddd", nameA: "Александр", cityId: 2, district: "ssss", },
-        //             {keyitems: 8, country: "ddddd", nameA: "Владимир", cityId: 2, district: "ssss", },
-        //             {keyitems: 9, country: "ddddd", nameA: "Василий", cityId: 2, district: "ssss", },
-        //             {keyitems: 10, country: "ddddd", nameA: "Яков", cityId: 3, district: "ssss",},
-        //             {keyitems: 11, country: "ddddd", nameA: "Виктория", cityId: 3, district: "ssss",},
-        //             {keyitems: 12, country: "ddddd", nameA: "Николай", cityId: 3, district: "ssss", },
-        //             {keyitems: 13, country: "ddddd", nameA: "Валентин", cityId: 3, district: "ssss",}
-        //  ]
+    constructor(props) {
+        super(props);
+        this.state = {
+                cities : [],
+                citizens : [],
+                visibleCitizens : [], 
+                currentCityList : [],
+                currentDistrictList : [],
+                currentStreetList : [],
+                filtrStart : false
+            }
+        this.getData = new GetData();
+        this.loadStartData = this.loadStartData.bind(this);
+        this.selectionList = this.selectionList.bind(this);
+        this.onClickFilterItem = this.onClickFilterItem.bind(this);
+        this.allCitizens = this.allCitizens.bind(this);
     }
 
     async loadStartData() {
-        // const cities = this.getData.getCities();
+
         const citizens = this.getData.getResource('data/citizens.json');
-        console.log('loaddagi citizens ');
-        console.log(citizens);
+        const getProperty = (item,property) => {
+            const propertyValue = item.groups.filter(item => item.type === property);
+            if (propertyValue.length = 1) {
+                return propertyValue[0].name; 
+            } else {
+                return '...'
+            }
+        }
 
         let newArr = [];
-        let newArr2 = []
-        const newRes = await citizens.then(data => {
+        await citizens.then(data => {
             data.citizens.forEach((element, key) => {
-                const newObj = {'keyitems': key, 'country':'ddddd', 'nameA' : element.name,'cityId':element.id, 'district' : 'ssss',};
-                //getProperty(element,'district'),'street' : 'zzz'//getProperty(element,'street')
+                const newObj = {
+                    'idPerson': key, 
+                    'country':'России', 
+                    'name' : element.name,
+                    'cityId':element.id, 
+                    'city' : getProperty(element,'city'),
+                    'district' : getProperty(element,'district'),
+                    'street' : getProperty(element,'street'),
+                };
                 newArr.push(newObj)
             })
-
-            // newArr = JSON.parse(JSON.stringify(data));
-            // newArr.citizens.forEach((element, key) => {
-            //         const newObj = [{'keyitems': key, 'country':'ddddd', 'nameA' : element.name,'cityId':element.id, 'district' : 'ssss'}];
-            //         //getProperty(element,'district'),'street' : 'zzz'//getProperty(element,'street')
-            //         newArr2 = [...newArr2, ...newObj]
-            //         // console.log(newArr2)
-            //     })
-            //     console.log(newArr2)
-            // // return newArr2
         })
-        console.log('newArr --- ***** ');
-        console.log(newArr);
-        
-        
-        // this.setState({cities});
         this.setState({citizens : newArr});
+        this.setState({visibleCitizens : newArr});
+        
+        const cities = this.getData.getResource('data/cities.json');
+
+        newArr = [];
+        await cities.then(data => {
+            data.cities.forEach((element, key) => {
+                const newObj = {
+                    'keyitems': key, 
+                    'name' : element.name,
+                    'cityId':element.id, 
+                    'data' : element.data
+                };
+                newArr.push(newObj)
+            })
+        })
+        this.setState({cities : newArr});
     }
 
     componentDidMount() {
         this.loadStartData();
     }
 
+    selectionList(list, selectionType) {
+        let newArr = [];
+        if (list !== undefined) {
+            list.forEach(element => {
+                let addItem = true;
+                const listElement = element[`${selectionType}`];
+                newArr.forEach(newElement => {
+                    if (newElement[`${selectionType}`] === listElement) {
+                        addItem = false;
+                    }
+                })
+                if (addItem) {
+                    newArr.push(element)
+                }
+            });
+        }
+        return newArr;
+    }
+
+    onClickFilterItem (e,currentItem, listType) {
+        
+        if (this.state.filtrStart == false) {
+            this.setState({filtrStart : true})
+        }
+        
+        const {citizens} = this.state;
+        const visibleCitizens = citizens.filter(element => {
+            return element[`${listType}`] === currentItem[`${listType}`]
+        })
+
+        this.setState({visibleCitizens})
+
+        let currentCityList, currentDistrictList, currentStreetList;
+        
+        if (listType = 'city') {
+            currentCityList = visibleCitizens;
+            currentDistrictList = this.selectionList(visibleCitizens, 'district');
+            currentStreetList = this.selectionList(currentDistrictList, 'street');
+            this.setState({currentDistrictList});
+            this.setState({currentStreetList});
+        }
+
+        if (listType = 'district') {
+            currentDistrictList = visibleCitizens;
+            currentStreetList = this.selectionList(currentDistrictList, 'street');
+            this.setState({currentStreetList});
+        }
+    }
+
+    allCitizens() {
+        const {citizens} = this.state;
+        this.setState({visibleCitizens : citizens})
+        const currentDistrictList = this.selectionList(citizens, 'district');
+        const currentStreetList = this.selectionList(citizens, 'street');
+        this.setState({currentDistrictList});
+        this.setState({currentStreetList});
+    }
+
     render() {
         
-        const visibleCitizensList = this.state.citizens;
-        console.log('boshlangich visible list');
-        console.log(visibleCitizensList)
+        const {cities, citizens, visibleCitizens,filtrStart} = this.state;
+        let currentCityList, currentDistrictList, currentStreetList; 
+
+        currentCityList = this.selectionList(citizens, 'city');
+        
+        if (filtrStart) {
+            currentDistrictList = this.state.currentDistrictList;;
+            currentStreetList = this.state.currentStreetList;
+        } else {
+            currentDistrictList = this.selectionList(citizens, 'district');
+            currentStreetList = this.selectionList(citizens, 'street');
+        }
+        
+
         return(
             <div className='app'>
-                <Header/>
+                <Header />
                 <div className='app-bottom'>
-                    <FiltrPanel/>
+                    <FiltrPanel
+                        currentCityList = {currentCityList}
+                        currentDistrictList = {currentDistrictList}
+                        currentStreetList = {currentStreetList}
+                        citizens = {citizens}
+                        onClickFilterItem = {this.onClickFilterItem}
+                        allCitizens = {this.allCitizens}
+                    />
                     <CitizensList 
-                        itemlist = {visibleCitizensList}    
+                        itemlist = {visibleCitizens}    
                     />
                 </div>
             </div>

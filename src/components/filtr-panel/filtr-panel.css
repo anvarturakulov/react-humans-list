@@ -3,4 +3,22 @@
     width: 280px;
     margin-right: 20px;
     height: 100%;
+    margin-top: 15px;
+    margin-left: 20px;
+    padding: 20px;
+}
+
+.caption{
+    color: #333;
+    font-weight: 700;
+}
+
+.filtr-panel-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.filtr-panel-header button{
+    cursor: pointer;
+    padding: 0px 10px;
 }

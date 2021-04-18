@@ -1,5 +1,7 @@
 .list-item{
     border: 1px solid #f1c846;
+    border-bottom: none;
+    padding: 10px;
 }
 
 .caption-box{
@@ -10,4 +12,8 @@
 .information-block{
     display: flex;
     justify-content: space-between;
+}
+
+li{
+    list-style: none;
 }
