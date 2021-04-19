@@ -107,17 +107,17 @@ export default class App extends Component {
         const {filterCity, filterDistrict, filterStreet, citizens} = this.state;
         const filterFlag = [0,0,0];
 
-        filterFlag[0] = filterCity =='' ? 0 : 1; 
-        filterFlag[1] = filterDistrict =='' ? 0 : 1; 
-        filterFlag[2] = filterStreet =='' ? 0 : 1; 
+        filterFlag[0] = filterCity ==='' ? 0 : 1; 
+        filterFlag[1] = filterDistrict ==='' ? 0 : 1; 
+        filterFlag[2] = filterStreet ==='' ? 0 : 1; 
 
         const visibleCitizens = citizens.filter(element => {
             return (
-                    ((filterFlag[0] == 0)||(element['city'] == filterCity))
+                    ((filterFlag[0] === 0)||(element['city'] === filterCity))
                     &&
-                    ((filterFlag[1] == 0)||(element['district'] == filterDistrict))
+                    ((filterFlag[1] === 0)||(element['district'] === filterDistrict))
                     && 
-                    ((filterFlag[2] == 0)||(element['street'] == filterStreet))
+                    ((filterFlag[2] === 0)||(element['street'] === filterStreet))
                 )
         })
 
@@ -126,22 +126,22 @@ export default class App extends Component {
 
     async onClickFilterItem (e,currentItem, listType) {
         
-        if (this.state.filtrStart == false) {
+        if (this.state.filtrStart === false) {
             this.setState({filtrStart : true})
         }
 
-        const {citizens} = this.state;
+        // const {citizens} = this.state;
         
-        if (listType == 'city') {
+        if (listType === 'city') {
           await this.setState({filterCity :currentItem[`city`]});
         
         }
 
-        if (listType == 'district') {
+        if (listType === 'district') {
             await this.setState({filterDistrict :currentItem[`district`]});
         }
 
-        if (listType == 'street') {
+        if (listType === 'street') {
             await this.setState({filterStreet :currentItem[`street`]});
         }
 
@@ -165,10 +165,15 @@ export default class App extends Component {
         switch (type) {
             case 'city':
                 await this.setState({filterCity : ''});
+                break;
             case 'district':
                 await this.setState({filterDistrict : ''});
+                break;
             case 'street':
                 await this.setState({filterStreet : ''});
+                break;
+            default :
+                break;
           }
         
           this.filtrVisibleCitizens();
@@ -177,7 +182,7 @@ export default class App extends Component {
 
     render() {
         
-        const {cities, citizens, visibleCitizens,filtrStart} = this.state;
+        const {cities, citizens, visibleCitizens} = this.state;
         let currentCityList, currentDistrictList, currentStreetList; 
 
         currentCityList = this.selectionList(citizens, 'city');
@@ -210,6 +215,7 @@ export default class App extends Component {
                         filterDistrict = {this.state.filterDistrict}   
                         filterStreet = {this.state.filterStreet}  
                         btnDelete = {this.btnDelete} 
+                        cities = {cities}
                     />
                 </div>
             </div>

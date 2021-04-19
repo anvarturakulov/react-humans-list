@@ -18,10 +18,10 @@ export default class FiltrList extends Component {
             const result = arr.map((item) => {
                 return (
                     <li key = {item.idPerson} >
-                        <a className='filtr-link' href='#' onClick={(e)=>this.props.onClickFilterItem(e,item,this.props.listType)}>
+                        <div className='filtr-link' onClick={(e)=>this.props.onClickFilterItem(e,item,this.props.listType)}>
                             <span>{item[`${this.props.listType}`]}</span>
                             <span>{this.countCitizens(item, this.props.listType)}</span>
-                        </a>
+                        </div>
                     </li>
                 )
             })

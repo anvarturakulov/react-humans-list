@@ -1,3 +1,4 @@
 .app-bottom{
     display: flex;
+    flex-wrap: wrap;
 }

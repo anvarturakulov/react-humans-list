@@ -10,7 +10,7 @@ export default class CitizensList extends Component {
             const result = arr.map((item) => {
                 return (
                     <li key = {item.idPerson}>
-                        <CitizensListItem {...item}/>
+                        <CitizensListItem {...item} cities={this.props.cities}/>
                     </li>
                 )
             })
@@ -28,7 +28,7 @@ export default class CitizensList extends Component {
         const cityBox = (filterCity !== '') ? <button onClick = {()=> this.props.btnDelete('city')}>{filterCity}</button> : <></>;
         const districtBox = (filterDistrict !== '') ? <button onClick = {()=> this.props.btnDelete('district')}>{filterDistrict}</button> : <></>;
         const streetBox = (filterStreet !== '') ? <button onClick = {()=> this.props.btnDelete('street')}>{filterStreet}</button> : <></>;
-        const comment = (filterCity+filterDistrict+filterStreet) !='' ? <div className='comment'>Чтобы убрать или изменить филтр нажмите кнопки</div>: null;
+        const comment = (filterCity+filterDistrict+filterStreet) !=='' ? <div className='comment'>Чтобы убрать или изменить филтр нажмите кнопки</div>: null;
 
         return(
             <div>
